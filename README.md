@@ -39,9 +39,9 @@ func main() {
         ConsentTransactionID: prove.String("EWSrelease-01092020-testTMO5"),
         DeviceIP: "2607:fb90:be01:4122:e118:813f:736a:b7b9",
         FinalTargetURL: "http://www.google.com",
-        MobileNetworkOperator: prove.String("corrupti"),
+        MobileNetworkOperator: prove.String("T-Mobile"),
         RequestID: "7f83-b0c4-90e0-90b3-11e10800200c9a66",
-        SubClientID: prove.String("provident"),
+        SubClientID: prove.String("D6hy5294x70dY3l76xU6"),
         SubscriptionCustomerID: prove.String("ThisIsMyCustomerId222"),
     })
     if err != nil {
@@ -62,7 +62,6 @@ func main() {
 ### [MobileAuth](docs/sdks/mobileauth/README.md)
 
 * [AuthByRedirect](docs/sdks/mobileauth/README.md#authbyredirect) - Authenticate by Redirect
-* [AuthByRedirectFinish](docs/sdks/mobileauth/README.md#authbyredirectfinish) - Authenticate by Redirect Finish
 <!-- End SDK Available Operations -->
 
 ### Maturity
