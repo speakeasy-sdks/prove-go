@@ -1,4 +1,4 @@
-module AuthByRedirect
+module github.com/speakeasy-sdks/prove-go
 
 go 1.14
 

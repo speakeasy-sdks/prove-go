@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"AuthByRedirect/pkg/types"
+	"github.com/speakeasy-sdks/prove-go/pkg/types"
 )
 
 const (

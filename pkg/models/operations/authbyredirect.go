@@ -3,7 +3,7 @@
 package operations
 
 import (
-	"AuthByRedirect/pkg/models/shared"
+	"github.com/speakeasy-sdks/prove-go/pkg/models/shared"
 	"net/http"
 )
 

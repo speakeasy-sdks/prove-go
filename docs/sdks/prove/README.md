@@ -1,4 +1,4 @@
-# AuthByRedirect SDK
+# Prove SDK
 
 ## Overview
 

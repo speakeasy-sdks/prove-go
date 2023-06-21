@@ -1,5 +1,5 @@
 mobileauth.go
-authbyredirect.go
+prove.go
 go.mod
 go.sum
 pkg/types/bigint.go
@@ -20,7 +20,7 @@ pkg/models/shared/redirectresponse.go
 pkg/models/shared/redirectrequest.go
 pkg/models/shared/redirectfinishresponse.go
 pkg/models/shared/redirectfinishrequest.go
-docs/sdks/authbyredirect/README.md
+docs/sdks/prove/README.md
 docs/sdks/mobileauth/README.md
 USAGE.md
 docs/models/operations/authbyredirectresponse.md
