@@ -1,4 +1,9 @@
 configVersion: 1.0.0
+management:
+  docChecksum: dec6d3ac3b0a9fe86c501aec271c4320
+  docVersion: v1.0.0
+  speakeasyVersion: 1.49.1
+  generationVersion: 2.41.5
 generation:
   comments:
     disableComments: false
@@ -8,6 +13,6 @@ generation:
   singleTagPerOp: false
   tagNamespacingDisabled: false
 go:
-  version: 0.0.1
+  version: 1.0.0
   maxMethodParams: "4"
   packageName: AuthByRedirect
