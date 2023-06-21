@@ -47,3 +47,11 @@ Based on:
 - Speakeasy CLI 1.49.1 (2.41.5) https://github.com/speakeasy-api/speakeasy
 ### Releases
 - [Go v1.0.5] https://github.com/speakeasy-sdks/prove-go/releases/tag/v1.0.5 - .
+
+## 2023-06-21 15:50:12
+### Changes
+Based on:
+- OpenAPI Doc v1.0.0 
+- Speakeasy CLI 1.49.1 (2.41.5) https://github.com/speakeasy-api/speakeasy
+### Releases
+- [Go v1.0.6] https://github.com/speakeasy-sdks/prove-go/releases/tag/v1.0.6 - .

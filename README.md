@@ -62,6 +62,7 @@ func main() {
 ### [MobileAuth](docs/sdks/mobileauth/README.md)
 
 * [AuthByRedirect](docs/sdks/mobileauth/README.md#authbyredirect) - Authenticate by Redirect
+* [AuthByRedirectFinish](docs/sdks/mobileauth/README.md#authbyredirectfinish) - Authenticate by Redirect Finish
 <!-- End SDK Available Operations -->
 
 ### Maturity
