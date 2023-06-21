@@ -87,3 +87,66 @@ func (s *mobileAuth) AuthByRedirect(ctx context.Context, request shared.Redirect
 
 	return res, nil
 }
+
+// AuthByRedirectFinish - Authenticate by Redirect Finish
+// This endpoint finishes the Mobile Auth process by passing the second verification fingerprint, returned from the carrier call on the device, to then—if successful—receive the consumer's Payfone Alias and mobile number.
+func (s *mobileAuth) AuthByRedirectFinish(ctx context.Context, request shared.RedirectFinishRequest) (*operations.AuthByRedirectFinishResponse, error) {
+	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
+	url := strings.TrimSuffix(baseURL, "/") + "/mobileauth/2014/07/01/authenticateByRedirectFinish"
+
+	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, "Request", "json")
+	if err != nil {
+		return nil, fmt.Errorf("error serializing request body: %w", err)
+	}
+	if bodyReader == nil {
+		return nil, fmt.Errorf("request body is required")
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bodyReader)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("user-agent", fmt.Sprintf("speakeasy-sdk/%s %s %s %s", s.sdkConfiguration.Language, s.sdkConfiguration.SDKVersion, s.sdkConfiguration.GenVersion, s.sdkConfiguration.OpenAPIDocVersion))
+
+	req.Header.Set("Content-Type", reqContentType)
+
+	client := s.sdkConfiguration.DefaultClient
+
+	httpRes, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("error sending request: %w", err)
+	}
+	if httpRes == nil {
+		return nil, fmt.Errorf("error sending request: no response")
+	}
+
+	rawBody, err := io.ReadAll(httpRes.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response body: %w", err)
+	}
+	httpRes.Body.Close()
+	httpRes.Body = io.NopCloser(bytes.NewBuffer(rawBody))
+
+	contentType := httpRes.Header.Get("Content-Type")
+
+	res := &operations.AuthByRedirectFinishResponse{
+		StatusCode:  httpRes.StatusCode,
+		ContentType: contentType,
+		RawResponse: httpRes,
+	}
+	switch {
+	case httpRes.StatusCode == 200:
+		switch {
+		case utils.MatchContentType(contentType, `application/json`):
+			var out *shared.RedirectFinishResponse
+			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out); err != nil {
+				return nil, err
+			}
+
+			res.RedirectFinishResponse = out
+		}
+	}
+
+	return res, nil
+}

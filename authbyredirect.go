@@ -112,7 +112,7 @@ func New(opts ...SDKOption) *AuthByRedirect {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "v1.0.0",
-			SDKVersion:        "1.0.0",
+			SDKVersion:        "1.0.1",
 			GenVersion:        "2.41.5",
 		},
 	}
