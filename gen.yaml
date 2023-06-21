@@ -9,10 +9,10 @@ generation:
     disableComments: false
     omitDescriptionIfSummaryPresent: false
   baseServerURL: ""
-  sdkClassName: AuthByRedirect
+  sdkClassName: Prove
   singleTagPerOp: false
   tagNamespacingDisabled: false
 go:
   version: 1.0.1
   maxMethodParams: "4"
-  packageName: AuthByRedirect
+  packageName: github.com/speakeasy-sdks/prove-go
