@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"AuthByRedirect/pkg/types"
+	"github.com/speakeasy-sdks/prove-go/pkg/types"
 )
 
 func populateForm(paramName string, explode bool, objType reflect.Type, objValue reflect.Value, delimiter string, getFieldName func(reflect.StructField) string) url.Values {
