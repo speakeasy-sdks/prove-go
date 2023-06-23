@@ -154,7 +154,7 @@ components:
           example: "ThisIsMyCustomerId222"
           description: A unique identifier for our customer's subscribers for Identity Manager.
         consentStatus:
-          $ref: './common.yaml#/components/schemas/ConsentStatus'
+          $ref: './common/components.yaml#/components/schemas/consentStatus'
         phoneNumber:
           type: string
           example: "6464778753"
