@@ -23,8 +23,13 @@ jobs:
       mode: pr
       openapi_doc_auth_header: x-api-key
       openapi_docs: |
-        - https://app.speakeasyapi.dev/v1/apis/AuthByRedirect/version/v1/schema/download
-        - https://app.speakeasyapi.dev/v1/apis/AuthByRedirectFinish/version/v1/schema/download
+        - ./openapi/authbyredirect.yaml
+        - ./openapi/authbyredirectfinish.yaml
+        - ./openapi/getauthurl.yaml
+        - ./openapi/identity.yaml
+        - ./openapi/instantlinkresult.yaml
+        - ./openapi/trust.yaml
+        - ./openapi/verify.yaml
       speakeasy_version: latest
     secrets:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
