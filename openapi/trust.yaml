@@ -201,15 +201,7 @@ components:
           example: FB9990AC4VKRKKX801F617431E9C9B5D10MEK1KQZ3T9PCC265D01B991F09559712BEF30B7115C258F6G38FB0EF56226588191F2011FF1246401DF6B6
           description: A persistent ID that uniquely identifies a telephone subscriber. A phoneNumber or payfoneAlias is required in the request, not both.
         consentStatus:
-          type: string
-          example: "optedOut"
-          $anchor: consentStatus
-          description: "Denotes whether consent has been provided by the mobile subscriber for this transaction. Acceptable values are: optedIn, optedOut, notCollected, unknown. Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time."
-          enum:
-            - "optedIn"
-            - "optedOut"
-            - "notCollected"
-            - "unknown"
+          $ref: './common.yaml#/components/schemas/ConsentStatus'
         phoneNumber:
           type: string
           example: '8167434789'

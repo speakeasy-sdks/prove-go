@@ -154,15 +154,7 @@ components:
           example: "ThisIsMyCustomerId222"
           description: A unique identifier for our customer's subscribers for Identity Manager.
         consentStatus:
-          type: string
-          example: "optedOut"
-          $anchor: consentStatus
-          description: "Denotes whether consent has been provided by the mobile subscriber for this transaction. Acceptable values are: optedIn, optedOut, notCollected, unknown. Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time."
-          enum:
-            - "optedIn"
-            - "optedOut"
-            - "notCollected"
-            - "unknown"
+          $ref: './common.yaml#/components/schemas/ConsentStatus'
         phoneNumber:
           type: string
           example: "6464778753"
