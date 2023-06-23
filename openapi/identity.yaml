@@ -1,0 +1,193 @@
+openapi: 3.1.0
+info:
+  title: Prove OpenAPI definition
+  version: v1.0.0
+servers:
+  - url: https://api.staging.payfone.com
+    description: Sandbox server (uses test data)
+  - url: https://api.payfone.com
+    description: Production server
+security:
+  - bearerAuth: []
+tags:
+  - name: PreFill
+    description: Operations or actions related to identity
+
+paths:
+  /identity/v2:
+    post:
+      summary: Get the Identity Information
+      description: >
+        This endpoint request sends the phone number previously checked in the Eligibility API, along with either the SSN (full or last four digits) or date of birth, to then return the correct identity information for the consumer to autofill the customer's form/application.
+      operationId: getIdentity
+      x-speakeasy-name-overrides: getIdentity
+      tags:
+        - PreFill
+      x-speakeasy-group: PreFill
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdentityResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    IdentityResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+          description: The requestId from the request, reflected back for tracking purposes.
+        status:
+          type: integer
+          example: 0
+          description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+        description:
+          type: string
+          example: "Success."
+          description: A text string that defines the cause of the status code.
+        response:
+          type: object
+          properties:
+            transactionId:
+              type: string
+              example: "163657716"
+              description: Unique transaction identifier used to identify the results of the request.
+            phoneNumber:
+              type: string
+              example: "13478035027"
+              description: The phone number associated with the subscriber.
+            lineType:
+              type: string
+              example: "Mobile"
+              description: "Line type associated with the phone number. Possible values are: Mobile, Landline, FixedVoIP, NonFixedVoIP"
+            carrier:
+              type: string
+              example: "Verizon"
+              description: The carrier related to the phone number.
+            countryCode:
+              type: string
+              example: "US"
+              description: The country code associated with the phone number
+            reasonCodes:
+              type: array
+              description: An array of indicators provide additional context about the transaction. See Reason Codes Reference Information for detailed reason codes.
+              items:
+                type: string
+                example: "PT"
+            individual:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: "Jack"
+                  description: The first name of the person
+                lastName:
+                  type: string
+                  example: "Frost"
+                  description: The last name of the person
+                addresses:
+                  type: array
+                  description: Physical address(es) that are associated with the phone number.
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                        example: "123 Main Street"
+                        description: The primary address line. Usually populated.
+                      extendedAddress:
+                        type: string
+                        example: "Apt. 2B"
+                        description: The secondary address line. Populated for suites, apartments, boxes, departments, etc.
+                      city:
+                        type: string
+                        example: "San Francisco"
+                        description: The city where the address is located.
+                      region:
+                        type: string
+                        example: "CA"
+                        description: The region or state where the address is located.
+                      postalCode:
+                        type: string
+                        example: "94015"
+                        description: The postal/zip code of the address.
+                emailAddresses:
+                  type: array
+                  description: The email address(es) associated with this phone number. This is a premium data field; if you are interested in access, please speak with your account manager.
+                  items:
+                    type: string
+                    example: "test@test1.com"
+                ssn:
+                  type: string
+                  example: "1234567890"
+                  description: Social security number
+                dob:
+                  type: string
+                  example: "1981-06-27"
+                  description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+    IdentityRequest:
+      required:
+        - consentStatus
+        - requestId
+        - phoneNumber
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: "14f3-b0c4-90e0-90b3-11e1-0800200c9a66"
+          description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+        subscriptionCustomerId:
+          type: string
+          example: "ThisIsMyCustomerId222"
+          description: A unique identifier for our customer's subscribers for Identity Manager.
+        consentStatus:
+          type: string
+          example: "optedOut"
+          $anchor: consentStatus
+          description: "Denotes whether consent has been provided by the mobile subscriber for this transaction. Acceptable values are: optedIn, optedOut, notCollected, unknown. Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time."
+          enum:
+            - "optedIn"
+            - "optedOut"
+            - "notCollected"
+            - "unknown"
+        phoneNumber:
+          type: string
+          example: "6464778753"
+          description: The phone number being queried. Formatted in E.164 formatting for international numbers including the leading plus sign.
+        dob:
+          type: string
+          example: "1982-07-19"
+          description: "Date of birth associated with the phone number. Three different styles are allowed; ISO 8601 format for full DOB (YYYY-MM-DD), month and year (mm/yyyy) or month and day (mm/dd). In order to access DOB and SSN data for a phone number, you must supply in the request the DOB, partial SSN, or full SSN."
+        ssn:
+          type: string
+          example: "470806227"
+          description: The social security number associated with the phone number (#########)
+        last4:
+          type: string
+          example: "6227"
+          description: Last four of the social security number associated with the phone number.
+        numberOfAddresses:
+          type: string
+          example: "3"
+          description: The desired number of addresses to return. The default and recommended amount is 3; more could affect your service level. The maximum possible is 10.
+        numberOfEmails:
+          type: string
+          example: "3"
+          description: The desired number of email addresses to return. The default and recommended amount is 3; more could affect your service level. The maximum possible is 10.
+        trustScore:
+          type: string
+          example: "true"
+          description: "Internal only: When set to true, Trust Score is called."

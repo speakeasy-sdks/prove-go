@@ -1,0 +1,105 @@
+openapi: 3.1.0
+info:
+  title: Prove OpenAPI definition
+  version: v1.0.0
+servers:
+  - url: https://api.staging.payfone.com
+    description: Sandbox server (uses test data)
+  - url: https://api.payfone.com
+    description: Production server
+tags:
+  - name: Instant Link
+    description: Operations or actions related to retrieving an Intant Link.
+paths:
+  /fortified/2015/06/01/getAuthUrl:
+    post:
+      summary: Authorization Url
+      description: >
+        As the starting point for Instant Link, this endpoint provides an authentication URL (appended with the first, unique verification fingerprint) that can be sent via SMS to initiate the middle authentication step.
+      operationId: getAuthUrl
+      x-speakeasy-name-override: getAuthUrl
+      tags:
+        - Instant Link
+      x-speakeasy-group: Instant Link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUrlRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthUrlResponse'
+components:
+  schemas:
+    AuthUrlResponse:
+      type: object
+      properties:
+        RequestId:
+          type: string
+          example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+          description: The requestId from the request, reflected back for tracking purposes.
+        Status:
+          type: integer
+          example: 0
+          description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+        Description:
+          type: string
+          example: "Success."
+          description: A text string that defines the cause of the status code.
+        Response:
+          type: object
+          properties:
+            AuthenticationUrl:
+              type: string
+              example: "http://device.payfone.com/cAuth?vfp=7BkGapm9"
+              description: Fortified URL to be sent via SMS to the mobile device to be clicked on by the device to be authenticated. The max length returned is 2048 bytes.
+            MobileOperatorName:
+              type: string
+              example: "Verizon"
+              description: The carrier related to the phone number.
+    AuthUrlRequest:
+      required:
+        - requestId
+        - sessionId
+        - apiClientId
+        - finalTargetUrl
+        - mobileNumber
+      type: object
+      properties:
+        requestId:
+          type: string
+          example: "7f83-b0c4-90e0-90b3-11e1-0800200c9a66"
+          description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+        sessionId:
+          type: string
+          example: "0109083438"
+          description: Session identifier associated with this request. Max length is 128 bytes.
+        apiClientId:
+          type: string
+          example: "C6f1j294x70dY3l76xU6"
+          description: Prove-issued unique, private key that identifies the API Client.
+        subClientId:
+          type: string
+          example: "D6hy5294x70dY3l76xU6"
+          description: Prove-issued unique, private key that identifies Sub Client.
+        sourceIp:
+          type: string
+          example: "2607:fb90:be01:4122:e118:813f:736a:b7b9"
+          description: The IP address of the device the request initiates from. This adds an additional fraud detection indicator, as Prove can use this value to complete an IP comparison with the IP of the device that actually clicks the link sent.
+        finalTargetUrl:
+          type: string
+          example: "http://www.google.com"
+          description: The URL of the client server that will be called back by the phone, providing the VFP for the result call.
+        mobileNumber:
+          type: string
+          example: "8167434789"
+          description: The mobile number that is being sent the SMS link. Formatted in E.164 formatting for international numbers including the leading plus sign.
+        subscriptionCustomerId:
+          type: string
+          example: "ThisIsMyCustomerId222"
+          description: A unique identifier for our customer's subscribers for Identity Manager.

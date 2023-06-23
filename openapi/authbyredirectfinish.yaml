@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: OpenAPI definition
+  title: Prove OpenAPI definition
   version: v1.0.0
 servers:
   - url: https://api.staging.payfone.com
@@ -17,7 +17,7 @@ paths:
       description: >
         This endpoint finishes the Mobile Auth process by passing the second verification fingerprint, returned from the carrier call on the device, to then—if successful—receive the consumer's Payfone Alias and mobile number.
       operationId: authByRedirectFinish
-      x-speakeasy-name-overrides: authByRedirectFinish
+      x-speakeasy-name-override: authByRedirectFinish
       tags:
         - Mobile Auth
       x-speakeasy-group: Mobile Auth

@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: OpenAPI definition
+  title: Prove OpenAPI definition
   version: v1.0.0
 servers:
   - url: https://api.staging.payfone.com
@@ -17,7 +17,7 @@ paths:
       description: >
         This endpoint starts the Mobile Auth process by passing the IP for the device in question to be authenticated—along with the final URL the consumer will be directed to—and then returning a redirect URL appended to the first verification fingerprint in the response.
       operationId: authByRedirect
-      x-speakeasy-name-overrides: authByRedirect
+      x-speakeasy-name-override: authByRedirect
       tags:
         - Mobile Auth
       x-speakeasy-group: Mobile Auth
