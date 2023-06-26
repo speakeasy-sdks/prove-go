@@ -100,7 +100,7 @@ components:
           example: "ThisIsMyCustomerId222"
           description: A unique identifier for our customer's subscribers for Identity Manager.
         consentStatus:
-          $ref: './common/components.yaml#/components/schemas/ConsentStatus'
+          $ref: './common/components.yaml#/components/schemas/consentStatus'
         consentTransactionId:
           type: string
           example: "EWSrelease-01092020-testTMO5"

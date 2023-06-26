@@ -23,14 +23,15 @@ jobs:
       mode: pr
       openapi_doc_auth_header: x-api-key
       openapi_docs: |
-        - ./openapi/authbyredirect.yaml
-        - ./openapi/authbyredirectfinish.yaml
-        - ./openapi/getauthurl.yaml
-        - ./openapi/identity.yaml
-        - ./openapi/instantlinkresult.yaml
-        - ./openapi/trust.yaml
-        - ./openapi/verify.yaml
+        - authbyredirect.yaml
+        - authbyredirectfinish.yaml
+        - getauthurl.yaml
+        - identity.yaml
+        - instantlinkresult.yaml
+        - trust.yaml
+        - verify.yaml
       speakeasy_version: latest
+      working_directory: ./openapi
     secrets:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
       openapi_doc_auth_token: ${{ secrets.SPEAKEASY_API_KEY }}
