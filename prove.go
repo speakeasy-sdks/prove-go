@@ -4,6 +4,7 @@ package prove
 
 import (
 	"fmt"
+	"github.com/speakeasy-sdks/prove-go/pkg/models/shared"
 	"github.com/speakeasy-sdks/prove-go/pkg/utils"
 	"net/http"
 	"time"
@@ -41,9 +42,9 @@ func Float32(f float32) *float32 { return &f }
 func Float64(f float64) *float64 { return &f }
 
 type sdkConfiguration struct {
-	DefaultClient  HTTPClient
-	SecurityClient HTTPClient
-
+	DefaultClient     HTTPClient
+	SecurityClient    HTTPClient
+	Security          *shared.Security
 	ServerURL         string
 	ServerIndex       int
 	Language          string
@@ -62,8 +63,16 @@ func (c *sdkConfiguration) GetServerDetails() (string, map[string]string) {
 
 // Prove
 type Prove struct {
+	// Identity - Operations or actions related to identity
+	Identity *identity
+	// InstantLink - Operations or actions related to retrieving an Instant Link.
+	InstantLink *instantLink
 	// MobileAuth - Operations or actions related to a mobile authentication.
 	MobileAuth *mobileAuth
+	// PreFill - Operations or actions related to identity
+	PreFill *preFill
+	// Trust - Operations or actions related to Trust score
+	Trust *trust
 
 	sdkConfiguration sdkConfiguration
 }
@@ -106,14 +115,21 @@ func WithClient(client HTTPClient) SDKOption {
 	}
 }
 
+// WithSecurity configures the SDK to use the provided security details
+func WithSecurity(security shared.Security) SDKOption {
+	return func(sdk *Prove) {
+		sdk.sdkConfiguration.Security = &security
+	}
+}
+
 // New creates a new instance of the SDK with the provided options
 func New(opts ...SDKOption) *Prove {
 	sdk := &Prove{
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "v1.0.0",
-			SDKVersion:        "1.0.6",
-			GenVersion:        "2.41.5",
+			SDKVersion:        "1.1.0",
+			GenVersion:        "2.50.2",
 		},
 	}
 	for _, opt := range opts {
@@ -125,10 +141,22 @@ func New(opts ...SDKOption) *Prove {
 		sdk.sdkConfiguration.DefaultClient = &http.Client{Timeout: 60 * time.Second}
 	}
 	if sdk.sdkConfiguration.SecurityClient == nil {
-		sdk.sdkConfiguration.SecurityClient = sdk.sdkConfiguration.DefaultClient
+		if sdk.sdkConfiguration.Security != nil {
+			sdk.sdkConfiguration.SecurityClient = utils.ConfigureSecurityClient(sdk.sdkConfiguration.DefaultClient, sdk.sdkConfiguration.Security)
+		} else {
+			sdk.sdkConfiguration.SecurityClient = sdk.sdkConfiguration.DefaultClient
+		}
 	}
 
+	sdk.Identity = newIdentity(sdk.sdkConfiguration)
+
+	sdk.InstantLink = newInstantLink(sdk.sdkConfiguration)
+
 	sdk.MobileAuth = newMobileAuth(sdk.sdkConfiguration)
+
+	sdk.PreFill = newPreFill(sdk.sdkConfiguration)
+
+	sdk.Trust = newTrust(sdk.sdkConfiguration)
 
 	return sdk
 }

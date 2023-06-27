@@ -14,22 +14,22 @@ import (
 	"strings"
 )
 
-// mobileAuth - Operations or actions related to a mobile authentication.
-type mobileAuth struct {
+// instantLink - Operations or actions related to retrieving an Instant Link.
+type instantLink struct {
 	sdkConfiguration sdkConfiguration
 }
 
-func newMobileAuth(sdkConfig sdkConfiguration) *mobileAuth {
-	return &mobileAuth{
+func newInstantLink(sdkConfig sdkConfiguration) *instantLink {
+	return &instantLink{
 		sdkConfiguration: sdkConfig,
 	}
 }
 
-// AuthByRedirect - Authenticate by Redirect
-// This endpoint starts the Mobile Auth process by passing the IP for the device in question to be authenticated—along with the final URL the consumer will be directed to—and then returning a redirect URL appended to the first verification fingerprint in the response.
-func (s *mobileAuth) AuthByRedirect(ctx context.Context, request shared.RedirectRequest) (*operations.AuthByRedirectResponse, error) {
+// GetAuthURL - Authorization Url
+// As the starting point for Instant Link, this endpoint provides an authentication URL (appended with the first, unique verification fingerprint) that can be sent via SMS to initiate the middle authentication step.
+func (s *instantLink) GetAuthURL(ctx context.Context, request shared.AuthURLRequest) (*operations.GetAuthURLResponse, error) {
 	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	url := strings.TrimSuffix(baseURL, "/") + "/mobileauth/2014/07/01/authenticateByRedirect"
+	url := strings.TrimSuffix(baseURL, "/") + "/fortified/2015/06/01/getAuthUrl"
 
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, "Request", "json")
 	if err != nil {
@@ -67,7 +67,7 @@ func (s *mobileAuth) AuthByRedirect(ctx context.Context, request shared.Redirect
 
 	contentType := httpRes.Header.Get("Content-Type")
 
-	res := &operations.AuthByRedirectResponse{
+	res := &operations.GetAuthURLResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: contentType,
 		RawResponse: httpRes,
@@ -76,23 +76,23 @@ func (s *mobileAuth) AuthByRedirect(ctx context.Context, request shared.Redirect
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(contentType, `application/json`):
-			var out *shared.RedirectResponse
+			var out *shared.AuthURLResponse
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out); err != nil {
 				return nil, err
 			}
 
-			res.RedirectResponse = out
+			res.AuthURLResponse = out
 		}
 	}
 
 	return res, nil
 }
 
-// AuthByRedirectFinish - Authenticate by Redirect Finish
-// This endpoint finishes the Mobile Auth process by passing the second verification fingerprint, returned from the carrier call on the device, to then—if successful—receive the consumer's Payfone Alias and mobile number.
-func (s *mobileAuth) AuthByRedirectFinish(ctx context.Context, request shared.RedirectFinishRequest) (*operations.AuthByRedirectFinishResponse, error) {
+// GetResult - Instant Link Result
+// To complete the Instant Link flow, this endpoint passes the second, unique verification fingerprint returned by the mobile device, and identifies whether Instant Link was completed with or without carrier authentication, whether the link was clicked within the expiration time, and whether the input device was where the link was clicked.
+func (s *instantLink) GetResult(ctx context.Context, request shared.InstantLinkRequest) (*operations.GetResultResponse, error) {
 	baseURL := utils.ReplaceParameters(s.sdkConfiguration.GetServerDetails())
-	url := strings.TrimSuffix(baseURL, "/") + "/mobileauth/2014/07/01/authenticateByRedirectFinish"
+	url := strings.TrimSuffix(baseURL, "/") + "/fortified/2015/06/01/instantLinkResult"
 
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, "Request", "json")
 	if err != nil {
@@ -130,7 +130,7 @@ func (s *mobileAuth) AuthByRedirectFinish(ctx context.Context, request shared.Re
 
 	contentType := httpRes.Header.Get("Content-Type")
 
-	res := &operations.AuthByRedirectFinishResponse{
+	res := &operations.GetResultResponse{
 		StatusCode:  httpRes.StatusCode,
 		ContentType: contentType,
 		RawResponse: httpRes,
@@ -139,12 +139,12 @@ func (s *mobileAuth) AuthByRedirectFinish(ctx context.Context, request shared.Re
 	case httpRes.StatusCode == 200:
 		switch {
 		case utils.MatchContentType(contentType, `application/json`):
-			var out *shared.RedirectFinishResponse
+			var out *shared.InstantLinkResponse
 			if err := utils.UnmarshalJsonFromResponseBody(bytes.NewBuffer(rawBody), &out); err != nil {
 				return nil, err
 			}
 
-			res.RedirectFinishResponse = out
+			res.InstantLinkResponse = out
 		}
 	}
 

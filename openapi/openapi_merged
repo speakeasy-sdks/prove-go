@@ -1,0 +1,1010 @@
+openapi: 3.1.0
+info:
+    title: ProveOpenAPI definition
+    version: v1.0.0
+servers:
+    - url: https://api.staging.payfone.com
+      description: Sandbox server (uses test data)
+    - url: https://api.payfone.com
+      description: Production server
+tags:
+    - name: Mobile Auth
+      description: Operations or actions related to a mobile authentication.
+    - name: Instant Link
+      description: Operations or actions related to retrieving an Instant Link.
+    - name: PreFill
+      description: Operations or actions related to identity
+    - name: Trust
+      description: Operations or actions related to Trust score
+    - name: Identity
+      description: Operations or actions related to identity
+paths:
+    /mobileauth/2014/07/01/authenticateByRedirect:
+        post:
+            summary: Authenticate by Redirect
+            description: >
+                This endpoint starts the Mobile Auth process by passing the IP for the device in question to be authenticated—along with the final URL the consumer will be directed to—and then returning a redirect URL appended to the first verification fingerprint in the response.
+
+            operationId: authByRedirect
+            x-speakeasy-name-override: authByRedirect
+            tags:
+                - Mobile Auth
+            x-speakeasy-group: Mobile Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RedirectRequest'
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RedirectResponse'
+    /mobileauth/2014/07/01/authenticateByRedirectFinish:
+        post:
+            summary: Authenticate by Redirect Finish
+            description: >
+                This endpoint finishes the Mobile Auth process by passing the second verification fingerprint, returned from the carrier call on the device, to then—if successful—receive the consumer's Payfone Alias and mobile number.
+
+            operationId: authByRedirectFinish
+            x-speakeasy-name-override: authByRedirectFinish
+            tags:
+                - Mobile Auth
+            x-speakeasy-group: Mobile Auth
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RedirectFinishRequest'
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RedirectFinishResponse'
+    /fortified/2015/06/01/getAuthUrl:
+        post:
+            summary: Authorization Url
+            description: >
+                As the starting point for Instant Link, this endpoint provides an authentication URL (appended with the first, unique verification fingerprint) that can be sent via SMS to initiate the middle authentication step.
+
+            operationId: getAuthUrl
+            x-speakeasy-name-override: getAuthUrl
+            tags:
+                - Instant Link
+            x-speakeasy-group: Instant Link
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AuthUrlRequest'
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AuthUrlResponse'
+    /identity/v2:
+        post:
+            summary: Get the Identity Information
+            description: >
+                This endpoint request sends the phone number previously checked in the Eligibility API, along with either the SSN (full or last four digits) or date of birth, to then return the correct identity information for the consumer to autofill the customer's form/application.
+
+            operationId: getIdentity
+            x-speakeasy-name-overrides: getIdentity
+            tags:
+                - PreFill
+            x-speakeasy-group: PreFill
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/IdentityRequest'
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/IdentityResponse'
+    /fortified/2015/06/01/instantLinkResult:
+        post:
+            summary: Instant Link Result
+            description: >
+                To complete the Instant Link flow, this endpoint passes the second, unique verification fingerprint returned by the mobile device, and identifies whether Instant Link was completed with or without carrier authentication, whether the link was clicked within the expiration time, and whether the input device was where the link was clicked.
+
+            operationId: getResult
+            x-speakeasy-name-override: getResult
+            tags:
+                - Instant Link
+            x-speakeasy-group: Instant Link
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/InstantLinkRequest'
+            responses:
+                "200":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/InstantLinkResponse'
+    /trust/v2:
+        post:
+            summary: Trust Score
+            description: This endpoint queries the consumer's phone number (or PayfoneAlias) to return a Prove Trust Score and, potentially, other attributes to indicate the trustworthiness of a phone number and its identity.
+            operationId: getScore
+            x-speakeasy-name-override: getScore
+            tags:
+                - Trust
+            x-speakeasy-group: Trust
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ScoreRequest'
+            responses:
+                "200":
+                    description: Success - consentStatus=optedIn, details=true
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ScoreResponse'
+    /identity/verify/v2:
+        post:
+            summary: Verify Consumer Information
+            description: This endpoint submits the consumer's personal identifying information (PII) for verification; the response returns that verification decision and, if requested, detailed field-level information on each PII piece submitted.
+            operationId: verify
+            x-speakeasy-name-override: verify
+            tags:
+                - Identity
+            x-speakeasy-group: Identity
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/VerifyRequest'
+            responses:
+                "200":
+                    description: Success - details=true + identifiers submitted
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/VerifyResponse'
+components:
+    schemas:
+        RedirectResponse:
+            type: object
+            properties:
+                RequestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                Status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                Description:
+                    type: string
+                    example: "Success."
+                    description: A text string that defines the cause of the status code.
+                Response:
+                    type: object
+                    properties:
+                        AuthenticateTransactionId:
+                            type: string
+                            example: "e18f743e-a1b7-4d12-b8a7-a3569a76b110"
+                            description: A unique identifier generated by Prove that can be used to troubleshoot any problems with this transaction.
+                        RedirectTargetUrl:
+                            type: string
+                            example: "http://device.staging.payfone.com/mobileauth/2014/07/01/deviceAuthenticate?vfp=4e4759784e5755334d6d49744d546b794d4330304d4455314c5749774d7a45745a6a646d5a5445354d3249794d47553566444238524877783a83a827abfafbf2231685927f651934de3c988ac3f15bb76a6373ce593a68f417"
+                            description: If the phone is eligible for authentication, this field will contain the URL that the phone should be redirected to authenticate the phone. Max length returned is 2048 bytes.
+        RedirectRequest:
+            type: object
+            required:
+                - consentStatus
+                - requestId
+                - apiClientId
+                - finalTargetUrl
+                - deviceIp
+            properties:
+                requestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+                apiClientId:
+                    type: string
+                    example: "C6f1j294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies the API Client.
+                subClientId:
+                    type: string
+                    example: "D6hy5294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies Sub Client.
+                finalTargetUrl:
+                    type: string
+                    example: "http://www.google.com"
+                    description: The URL of the client server that will be called back by the phone, providing the VFP for the result call.
+                mobileNetworkOperator:
+                    type: string
+                    example: "T-Mobile"
+                    description: 'The mobile network operator that currently operates the phone number. Internal note: This is a legacy parameter and is no longer used.'
+                deviceIp:
+                    type: string
+                    example: "2607:fb90:be01:4122:e118:813f:736a:b7b9"
+                    description: The IP address of the mobile device to be authenticated.
+                subscriptionCustomerId:
+                    type: string
+                    example: "ThisIsMyCustomerId222"
+                    description: A unique identifier for our customer's subscribers for Identity Manager.
+                consentStatus:
+                    $ref: ./common/components.yaml#/components/schemas/consentStatus
+                consentTransactionId:
+                    type: string
+                    example: "EWSrelease-01092020-testTMO5"
+                    description: Uniquely identify the consent collected by the client. **Required** if `ConsentStatus` = `optedIn`
+                consentDescription:
+                    type: string
+                    example: "Test Description"
+                    description: The client describes the type of consent (electronic/paper), use case and reference to the version of Terms and Conditions (T&Cs), if applicable. **Required** if `ConsentStatus` = `optedIn`
+                consentCollectedTimestamp:
+                    type: string
+                    example: "2022-05-11"
+                    description: Date/Time field where the original consent was collected by the client. The string format is YYYY-MM-DD. **Required** if `ConsentStatus` = `optedIn`
+        IdentityRequest:
+            required:
+                - consentStatus
+                - requestId
+                - phoneNumber
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: "14f3-b0c4-90e0-90b3-11e1-0800200c9a66"
+                    description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+                subscriptionCustomerId:
+                    type: string
+                    example: "ThisIsMyCustomerId222"
+                    description: A unique identifier for our customer's subscribers for Identity Manager.
+                consentStatus:
+                    $ref: ./common/components.yaml#/components/schemas/consentStatus
+                phoneNumber:
+                    type: string
+                    example: "6464778753"
+                    description: The phone number being queried. Formatted in E.164 formatting for international numbers including the leading plus sign.
+                dob:
+                    type: string
+                    example: "1982-07-19"
+                    description: "Date of birth associated with the phone number. Three different styles are allowed; ISO 8601 format for full DOB (YYYY-MM-DD), month and year (mm/yyyy) or month and day (mm/dd). In order to access DOB and SSN data for a phone number, you must supply in the request the DOB, partial SSN, or full SSN."
+                ssn:
+                    type: string
+                    example: "470806227"
+                    description: The social security number associated with the phone number (#########)
+                last4:
+                    type: string
+                    example: "6227"
+                    description: Last four of the social security number associated with the phone number.
+                numberOfAddresses:
+                    type: string
+                    example: "3"
+                    description: The desired number of addresses to return. The default and recommended amount is 3; more could affect your service level. The maximum possible is 10.
+                numberOfEmails:
+                    type: string
+                    example: "3"
+                    description: The desired number of email addresses to return. The default and recommended amount is 3; more could affect your service level. The maximum possible is 10.
+                trustScore:
+                    type: string
+                    example: "true"
+                    description: "Internal only: When set to true, Trust Score is called."
+        RedirectFinishResponse:
+            type: object
+            properties:
+                RequestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                Status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                Description:
+                    type: string
+                    example: "Success."
+                    description: A text string that defines the cause of the status code.
+                Response:
+                    type: object
+                    properties:
+                        AuthenticateFinishTransactionId:
+                            type: string
+                            example: "144356671"
+                            description: A unique identifier generated by Prove that can be used to troubleshoot any problems with this transaction.
+                        PayfoneAlias:
+                            type: string
+                            example: "C24C4C54DR10481C4E0U44ERMVUP9S1TUNXPLA2T753ETMCFOA086TYMCAQL00B4E0CLC4C24BHZPO4QWPN68EAV14ERTVPMMEP7OCXTRBQR17YERTMK749"
+                            description: A persistent ID that uniquely identifies a telephone subscriber.
+                        AuthenticationCode:
+                            type: string
+                            example: "F22440010AC782406249CFE0560F68EF"
+                            description: A transaction ID denoting the authentication event.
+                        AuthenticationExpiration:
+                            type: string
+                            example: "2017-10-03T17:48:18.000Z"
+                            description: The expiration timestamp in UTC of the authentication code. Timestamp is in ISO-8601 format.
+                        MobileNumber:
+                            type: string
+                            example: "15553031212"
+                            description: The phone number of the originating phone.
+                        MobileCountryCode:
+                            type: string
+                            example: "310"
+                            description: The country code associated with this phone number.
+                        MobileOperatorName:
+                            type: string
+                            example: "Verizon"
+                            description: The carrier related to the phone number.
+        AuthUrlResponse:
+            type: object
+            properties:
+                RequestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                Status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                Description:
+                    type: string
+                    example: "Success."
+                    description: A text string that defines the cause of the status code.
+                Response:
+                    type: object
+                    properties:
+                        AuthenticationUrl:
+                            type: string
+                            example: "http://device.payfone.com/cAuth?vfp=7BkGapm9"
+                            description: Fortified URL to be sent via SMS to the mobile device to be clicked on by the device to be authenticated. The max length returned is 2048 bytes.
+                        MobileOperatorName:
+                            type: string
+                            example: "Verizon"
+                            description: The carrier related to the phone number.
+        IdentityResponse:
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                description:
+                    type: string
+                    example: "Success."
+                    description: A text string that defines the cause of the status code.
+                response:
+                    type: object
+                    properties:
+                        transactionId:
+                            type: string
+                            example: "163657716"
+                            description: Unique transaction identifier used to identify the results of the request.
+                        phoneNumber:
+                            type: string
+                            example: "13478035027"
+                            description: The phone number associated with the subscriber.
+                        lineType:
+                            type: string
+                            example: "Mobile"
+                            description: "Line type associated with the phone number. Possible values are: Mobile, Landline, FixedVoIP, NonFixedVoIP"
+                        carrier:
+                            type: string
+                            example: "Verizon"
+                            description: The carrier related to the phone number.
+                        countryCode:
+                            type: string
+                            example: "US"
+                            description: The country code associated with the phone number
+                        reasonCodes:
+                            type: array
+                            description: An array of indicators provide additional context about the transaction. See Reason Codes Reference Information for detailed reason codes.
+                            items:
+                                type: string
+                                example: "PT"
+                            example: "PT"
+                        individual:
+                            type: object
+                            properties:
+                                firstName:
+                                    type: string
+                                    example: "Jack"
+                                    description: The first name of the person
+                                lastName:
+                                    type: string
+                                    example: "Frost"
+                                    description: The last name of the person
+                                addresses:
+                                    type: array
+                                    description: Physical address(es) that are associated with the phone number.
+                                    items:
+                                        type: object
+                                        properties:
+                                            address:
+                                                type: string
+                                                example: "123 Main Street"
+                                                description: The primary address line. Usually populated.
+                                            extendedAddress:
+                                                type: string
+                                                example: "Apt. 2B"
+                                                description: The secondary address line. Populated for suites, apartments, boxes, departments, etc.
+                                            city:
+                                                type: string
+                                                example: "San Francisco"
+                                                description: The city where the address is located.
+                                            region:
+                                                type: string
+                                                example: "CA"
+                                                description: The region or state where the address is located.
+                                            postalCode:
+                                                type: string
+                                                example: "94015"
+                                                description: The postal/zip code of the address.
+                                emailAddresses:
+                                    type: array
+                                    description: The email address(es) associated with this phone number. This is a premium data field; if you are interested in access, please speak with your account manager.
+                                    items:
+                                        type: string
+                                        example: "test@test1.com"
+                                    example: "test@test1.com"
+                                ssn:
+                                    type: string
+                                    example: "1234567890"
+                                    description: Social security number
+                                dob:
+                                    type: string
+                                    example: "1981-06-27"
+                                    description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+        ScoreResponse:
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: 7f83-b0c4-90e0-90b3-11e10800200c9a66
+                    description: The requestId from the request, reflected back for tracking purposes.
+                status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                description:
+                    type: string
+                    example: Success.
+                    description: A text string that defines the cause of the status code.
+                response:
+                    type: object
+                    properties:
+                        transactionId:
+                            type: string
+                            example: '163657716'
+                            description: Unique transaction identifier used to identify the results of the request.
+                        payfoneAlias:
+                            type: string
+                            example: 666666664VKDEO11BC3EA0450A73013050MEK19P4SF9P89BF3C331880A3075A816A65D1A1390BD5AF6G31EE0B804104A5B04E7FC8B88FE226E03FB02
+                            description: A persistent ID that uniquely identifies a telephone subscriber.
+                        phoneNumber:
+                            type: string
+                            example: '13478035027'
+                            description: The phone number associated with the subscriber.
+                        lineType:
+                            type: string
+                            example: Mobile
+                            description: 'Line type associated with the phone number. Possible values are: Mobile, Landline, FixedVoIP, NonFixedVoIP'
+                        carrier:
+                            type: string
+                            example: Verizon
+                            description: The carrier related to the phone number.
+                        countryCode:
+                            type: string
+                            example: US
+                            description: The country code associated with the phone number
+                        statusIndex:
+                            type: string
+                            example: '11'
+                            description: A bitmapped value that represents networkStatus, accountType, accountRole, and customerType. For more information, see the Trust Score Integration Guide.
+                        isBaselined:
+                            type: boolean
+                            example: true
+                            description: An indicator to communicate whether Prove has ever transacted with the input phone number before the current transaction.
+                        trustScore:
+                            type: integer
+                            example: 892
+                            description: An integer value ranging from 0–1000 denotes the real-time trustworthiness of a phone number. 1000 indicates perfect trust, while 0 indicates a complete lack of trust. For more information on Trust Score, see the Trust Score Integration Guide.
+                        reasonCodes:
+                            type: array
+                            description: 'An array of indicators provide additional context about the transaction. See Reason Codes Reference Information for detailed reason codes.'
+                            items:
+                                type: string
+                                example: "CU"
+                            example: "CU"
+                        carrierStatus:
+                            type: string
+                            example: UNKNOWN
+                            description: 'The current phone number network status associated with the carriers. Values include: Active, Suspended, Disconnected, Unknown'
+                        phoneNumberVelocity:
+                            type: integer
+                            description: The number of times the subscriber has changed their phone number.
+                        portVelocity:
+                            type: integer
+                            example: 1
+                            description: The number of times the subscriber has changed their carrier within the last 90 days.
+                        simVelocity:
+                            type: integer
+                            description: The number of times the mobile subscriber has changed their device within the last 90 days.
+                        deviceVelocity:
+                            type: integer
+                            description: The number of times the mobile subscriber has changed their device within the last 90 days.
+                        payfoneTenure:
+                            type: object
+                            description: The amount of time Prove has been able to track the subscriber. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2021-11-21T23:59:59.000Z'
+                        carrierTenure:
+                            type: object
+                            description: The amount of time Prove has been able to track the carrier associated with the subscriber. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-11-14T23:59:59.000Z'
+                                maximumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-10-22T00:00:00.000Z'
+                        phoneNumberTenure:
+                            type: object
+                            description: The amount of time Prove has been able to track the phone number associated with the subscriber. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2021-11-21T23:59:59.000Z'
+                        simTenure:
+                            type: object
+                            description: The amount of time Prove has been able to track the SIM association with the subscriber. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-11-14T23:59:59.000Z'
+                                maximumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-10-22T00:00:00.000Z'
+                        deviceTenure:
+                            type: object
+                            description: The amount of time Prove has been able to track the device association with the subscriber. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-11-14T23:59:59.000Z'
+                                maximumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-10-22T00:00:00.000Z'
+                        portedDate:
+                            type: object
+                            description: The date associated with a port of the phone number. Defined with a minimum and maximum date.
+                            properties:
+                                minimumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-10-28T22:25:00.000Z'
+                                maximumDate:
+                                    type: string
+                                    format: date-time
+                                    example: '2022-10-28T22:25:00.000Z'
+        VerifyResponse:
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: 7f83-b0c4-90e0-90b3-11e10800200c9a66
+                    description: The requestId from the request, reflected back for tracking purposes.
+                status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                description:
+                    type: string
+                    example: Success.
+                    description: A text string that defines the cause of the status code.
+                response:
+                    type: object
+                    properties:
+                        transactionId:
+                            type: string
+                            example: '163657716'
+                            description: Unique transaction identifier used to identify the results of the request.
+                        phoneNumber:
+                            type: string
+                            example: '16464778753'
+                            description: The phone number(s) associated with the individual.
+                        lineType:
+                            type: string
+                            example: Mobile
+                            description: 'Line type associated with the phone number. Possible values are: Mobile, Landline, FixedVoIP, NonFixedVoIP.'
+                        carrier:
+                            type: string
+                            example: Verizon
+                            description: The carrier related to the phone number.
+                        countryCode:
+                            type: string
+                            example: US
+                            description: The country code associated with the phone number.
+                        verified:
+                            type: boolean
+                            example: true
+                            description: The results of the transaction request.
+                        address:
+                            type: object
+                            properties:
+                                streetNumber:
+                                    type: integer
+                                    example: 100
+                                    description: A score of the address input (minus the extendedAddress); values -1 to 100. 100 indicates an exact match.
+                                street:
+                                    type: boolean
+                                    example: true
+                                    description: The results of the street name match.
+                                city:
+                                    type: boolean
+                                    example: true
+                                    description: The results of the city match.
+                                region:
+                                    type: boolean
+                                    example: true
+                                    description: The results of the region (state abbreviation) match.
+                                postalCode:
+                                    type: boolean
+                                    example: true
+                                    description: The results of the postal/zip code match.
+                                distance:
+                                    type: number
+                                    format: float
+                                    description: The distance value—in miles—between the address in input and the normalized address on file.
+                                addressScore:
+                                    type: integer
+                                    example: 100
+                                    description: An overall address score that uses all the address attributes to generate the overall score; values -1 to 100. 100 indicates an exact match.
+                        name:
+                            type: object
+                            properties:
+                                firstName:
+                                    type: integer
+                                    example: 100
+                                    description: A score of the first name match; values -1 to 100. 100 indicates.
+                                lastName:
+                                    type: integer
+                                    example: 100
+                                    description: A score of the last name match; values -1 to 100. 100 indicates an exact match.
+                                nameScore:
+                                    type: integer
+                                    example: 100
+                                    description: An overall name score that uses both the first and last name scores to generate the overall score. Values -1 to 100. 100 indicates an exact match.
+                                identifiers:
+                                    type: object
+                                    properties:
+                                        last4:
+                                            type: boolean
+                                            example: true
+                                            description: The results of the last 4 of SSN match.
+                                        dob:
+                                            type: boolean
+                                            example: true
+                                            description: The results of the date of birth match.
+                                        driversLicenseState:
+                                            type: boolean
+                                            example: true
+                                            description: The results of the driver’s license state match.
+                                        driversLicenseNumber:
+                                            type: boolean
+                                            example: true
+                                            description: The results of the driver’s license number match.
+                                email:
+                                    type: object
+                                    properties:
+                                        emailAddress:
+                                            type: boolean
+                                            example: true
+                                            description: The results of the email match.
+                                reasonCodes:
+                                    type: array
+                                    description: An array of indicators providing additional context about the transaction.
+                                    items:
+                                        type: string
+                                        example: "NA"
+                                    example: "NA"
+        RedirectFinishRequest:
+            type: object
+            required:
+                - requestId
+                - apiClientId
+                - verificationFingerprint
+            properties:
+                requestId:
+                    type: string
+                    example: "7f8390e0-90b3-11e1-b0c4-0800200c9a66"
+                    description: >
+                        Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+
+                apiClientId:
+                    type: string
+                    example: "C6f1j294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies the API Client.
+                subClientId:
+                    type: string
+                    example: "ThisIsMyCustomerId222"
+                    description: Prove-issued unique, private key that identifies Sub Client.
+                verificationFingerprint:
+                    type: string
+                    example: "F22440010AC782406249CFE0560F68EF"
+                    description: The VFP value returned by the mobile device after authentication.
+        AuthUrlRequest:
+            required:
+                - requestId
+                - sessionId
+                - apiClientId
+                - finalTargetUrl
+                - mobileNumber
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e1-0800200c9a66"
+                    description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+                sessionId:
+                    type: string
+                    example: "0109083438"
+                    description: Session identifier associated with this request. Max length is 128 bytes.
+                apiClientId:
+                    type: string
+                    example: "C6f1j294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies the API Client.
+                subClientId:
+                    type: string
+                    example: "D6hy5294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies Sub Client.
+                sourceIp:
+                    type: string
+                    example: "2607:fb90:be01:4122:e118:813f:736a:b7b9"
+                    description: The IP address of the device the request initiates from. This adds an additional fraud detection indicator, as Prove can use this value to complete an IP comparison with the IP of the device that actually clicks the link sent.
+                finalTargetUrl:
+                    type: string
+                    example: "http://www.google.com"
+                    description: The URL of the client server that will be called back by the phone, providing the VFP for the result call.
+                mobileNumber:
+                    type: string
+                    example: "8167434789"
+                    description: The mobile number that is being sent the SMS link. Formatted in E.164 formatting for international numbers including the leading plus sign.
+                subscriptionCustomerId:
+                    type: string
+                    example: "ThisIsMyCustomerId222"
+                    description: A unique identifier for our customer's subscribers for Identity Manager.
+        VerifyRequest:
+            required:
+                - requestId
+                - firstName
+                - lastName
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: "14f3-b0c4-90e0-90b3-11e1-0800200c9a66"
+                    description: Unique identifier associated with this request. This identifier must be unique for each transaction.
+                subscriptionCustomerId:
+                    type: string
+                    example: "ThisIsMyCustomerId222"
+                    description: A unique identifier for our customer's subscribers for Identity Manager.
+                consentStatus:
+                    $ref: ./common/components.yaml#/components/schemas/consentStatus
+                phoneNumber:
+                    type: string
+                    example: "6464778753"
+                    description: The phone number being queried. Formatted in E.164 formatting for international numbers including the leading plus sign.
+                payfoneAlias:
+                    type: string
+                    example: "8EDE1ACC4VKRKKX8B91612DE9DCFB77DF0MEK1KQZ3T9PA44306E401F13F8B12A283E6E941AC03B46F6G3FD4CED48D730FC618931737A5FEE6E31E447"
+                    description: A persistent ID that uniquely identifies a telephone subscriber. A phoneNumber or payfoneAlias is required in the request, not both.
+                firstName:
+                    type: string
+                    example: "Marcia"
+                    description: First name associated with the phone number being queried.
+                lastName:
+                    type: string
+                    example: "Longo-Jones"
+                    description: Last name associated with the phone number being queried.
+                address:
+                    type: string
+                    example: "00 Mallard Park"
+                    description: The address number and street associated with the phone number being queried.
+                extendedAddress:
+                    type: string
+                    example: "Apartment 3A"
+                    description: The second line of the address associated with the phone number being queried.
+                city:
+                    type: string
+                    example: "New Orleans"
+                    description: The city associated with the phone number.
+                region:
+                    type: string
+                    example: "LA"
+                    description: The region (or state abbreviation) associated with the phone number.
+                postalCode:
+                    type: string
+                    example: "70165"
+                    description: The postal code associated with the phone number.
+                dob:
+                    type: string
+                    example: "1982-07-19"
+                    description: Date of birth associated with the phone number.
+                last4:
+                    type: string
+                    example: "6227"
+                    description: The last four of the social security number associated with the subscriber.
+                ssn:
+                    type: string
+                    example: "470806227"
+                    description: The social security number associated with the subscriber.
+                emailAddress:
+                    type: string
+                    example: "mlongok@amazonaws.com"
+                    description: Email associated with the phone number.
+                details:
+                    type: string
+                    example: "true"
+                    description: True indicates whether the client is accessing premium data responses.
+                lastVerified:
+                    type: string
+                    example: "2022-07-19"
+                    description: Date in which the identity behind the phone number was last verified.
+                phoneUpdate:
+                    type: string
+                    example: "true"
+                    description: If set to true, the phoneUpdate object will be included in the response if the phone number being queried has changed since the lastVerified date.
+                driversLicenseNumber:
+                    type: string
+                    example: "123456789"
+                    description: The driver's license number associated with the phone number and person being queried.
+                driversLicenseState:
+                    type: string
+                    example: "CO"
+                    description: The driver's license state associated with the phone number and person being queried.
+        InstantLinkResponse:
+            type: object
+            properties:
+                RequestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                Status:
+                    type: integer
+                    description: The status of the request. A response of 0 indicates success. Any non-0 response is an error indication. For more information on status codes, see the Error and Status Codes section.
+                Description:
+                    type: string
+                    example: "Success."
+                    description: A text string that defines the cause of the status code.
+                Response:
+                    type: object
+                    properties:
+                        TransactionId:
+                            type: string
+                            example: "163657716"
+                            description: Unique transaction identifier used to identify the results of the request.
+                        PhoneNumber:
+                            type: string
+                            example: "13478035027"
+                            description: The phone number of the originating phone
+                        Carrier:
+                            type: string
+                            example: "Verizon"
+                            description: The carrier related to the phone number
+                        LineType:
+                            type: string
+                            example: "Mobile"
+                            description: 'Line type associated with the phone number. Possible values are: Mobile, Landline, FixedVoIP, NonFixedVoIP'
+                        CountryCode:
+                            type: string
+                            example: "US"
+                            description: The country code associated with the phone number
+                        LinkClicked:
+                            type: string
+                            example: "0"
+                            description: 'Indicates whether the link was clicked within the expiration time. Possible values are: 1 (clicked), 0 (not clicked)'
+                        PhoneMatch:
+                            type: string
+                            example: "indeterminate"
+                            description: 'Indicates whether the link was clicked within the expiration time. Possible values are: 1 (clicked), 0 (not clicked)'
+                        IpAddressMatch:
+                            type: boolean
+                            example: true
+                            description: Boolean informing as to whether the link was clicked on the device that has the same public IP address as the web application that started the Instant Link process.<br><br>The goal is to understand if the application visitor is on the same network as the person who received and clicked on the instant link on the mobile device.
+                        SessionId:
+                            type: string
+                            example: "0109083438"
+                            description: Session identifier associated with this request flow. It should be the same session ID as the /getAuthUrl call.
+                        DeviceIp:
+                            type: string
+                            example: "10.1.68.167"
+                            description: An optional output (must be configured at the merchant level and not available for all customers) that returns the device's IP where the link was clicked. This can be compared to the sourceIp submitted in the /getAuthUrl call.
+        InstantLinkRequest:
+            type: object
+            required:
+                - requestId
+                - sessionId
+                - apiClientId
+                - verificationFingerprint
+            properties:
+                SessionId:
+                    type: string
+                    example: "0109083438"
+                    description: Session identifier associated with this request flow. It should be the same session ID as the /getAuthUrl call.
+                RequestId:
+                    type: string
+                    example: "7f83-b0c4-90e0-90b3-11e10800200c9a66"
+                    description: The requestId from the request, reflected back for tracking purposes.
+                apiClientId:
+                    type: string
+                    example: "C6f1j294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies the API Client.
+                subClientId:
+                    type: string
+                    example: "G6x1j294x70dY3l76xU6"
+                    description: Prove-issued unique, private key that identifies the API Client.
+                VerificationFingerprint:
+                    type: string
+                    example: "F22440010AC782406249CFE0560F68EF"
+                    description: The second, unique verification fingerprint returned by the mobile device
+        ScoreRequest:
+            required:
+                - consentStatus
+                - requestId
+                - phoneNumber
+            type: object
+            properties:
+                requestId:
+                    type: string
+                    example: '59c04ea5-5aae-4934-a96f-f32051f5078b'
+                    description: Unique identifier associated with this request. This identifier must be unique for each transaction. The RequestId input field is rejected as invalid if it contains any special characters other than dashes, periods, underbars, plus signs, equal signs, or forward slashes. Max length is 128 bytes.
+                payfoneAlias:
+                    type: string
+                    example: FB9990AC4VKRKKX801F617431E9C9B5D10MEK1KQZ3T9PCC265D01B991F09559712BEF30B7115C258F6G38FB0EF56226588191F2011FF1246401DF6B6
+                    description: A persistent ID that uniquely identifies a telephone subscriber. A phoneNumber or payfoneAlias is required in the request, not both.
+                consentStatus:
+                    $ref: ./common/components.yaml#/components/schemas/consentStatus
+                phoneNumber:
+                    type: string
+                    example: '8167434789'
+                    description: The phone number being queried. Formatted in E.164 formatting for international numbers including the leading plus sign.
+                details:
+                    type: string
+                    example: 'true'
+                    description: True indicates whether the client is accessing premium data responses. See Response Definitions for examples with and without details.
+                subscriptionCustomerId:
+                    type: string
+                    example: ThisIsMyCustomerId222
+                    description: A unique identifier for our customer's subscribers for Identity Manager.
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+security:
+    - bearerAuth: []
