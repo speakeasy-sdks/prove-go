@@ -23,13 +23,13 @@ jobs:
       mode: pr
       openapi_doc_auth_header: x-api-key
       openapi_docs: |
-        - authbyredirect.yaml
-        - authbyredirectfinish.yaml
-        - getauthurl.yaml
-        - identity.yaml
-        - instantlinkresult.yaml
-        - trust.yaml
-        - verify.yaml
+        - ./openapi/authbyredirect.yaml
+        - ./openapi/authbyredirectfinish.yaml
+        - ./openapi/getauthurl.yaml
+        - ./openapi/identity.yaml
+        - ./openapi/instantlinkresult.yaml
+        - ./openapi/trust.yaml
+        - ./openapi/verify.yaml
       speakeasy_version: latest
       working_directory: ./openapi
     secrets:
