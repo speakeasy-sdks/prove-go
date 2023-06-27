@@ -27,7 +27,11 @@ import(
 )
 
 func main() {
-    s := prove.New()
+    s := prove.New(
+        prove.WithSecurity(shared.Security{
+            BearerAuth: "",
+        }),
+    )
 
     ctx := context.Background()
     res, err := s.MobileAuth.AuthByRedirect(ctx, shared.RedirectRequest{
@@ -84,14 +88,18 @@ import(
 )
 
 func main() {
-    s := prove.New()
+    s := prove.New(
+        prove.WithSecurity(shared.Security{
+            BearerAuth: "",
+        }),
+    )
 
     ctx := context.Background()
     res, err := s.MobileAuth.AuthByRedirectFinish(ctx, shared.RedirectFinishRequest{
         APIClientID: "C6f1j294x70dY3l76xU6",
         RequestID: "7f8390e0-90b3-11e1-b0c4-0800200c9a66",
-        SubClientID: prove.String("corrupti"),
-        VerificationFingerprint: "provident",
+        SubClientID: prove.String("ThisIsMyCustomerId222"),
+        VerificationFingerprint: "F22440010AC782406249CFE0560F68EF",
     })
     if err != nil {
         log.Fatal(err)
