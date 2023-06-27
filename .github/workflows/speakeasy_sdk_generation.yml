@@ -31,6 +31,7 @@ jobs:
         - ./openapi/trust.yaml
         - ./openapi/verify.yaml
       speakeasy_version: latest
+      working_directory: ./openapi
     secrets:
       github_access_token: ${{ secrets.GITHUB_TOKEN }}
       openapi_doc_auth_token: ${{ secrets.SPEAKEASY_API_KEY }}
