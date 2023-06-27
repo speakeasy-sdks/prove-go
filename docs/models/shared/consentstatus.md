@@ -5,7 +5,6 @@ Denotes whether consent has been provided by the mobile subscriber for this tran
 Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time.
 
 
-
 ## Values
 
 | Name                        | Value                       |

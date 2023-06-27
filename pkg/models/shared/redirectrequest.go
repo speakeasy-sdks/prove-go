@@ -2,47 +2,6 @@
 
 package shared
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
-// ConsentStatus - Denotes whether consent has been provided by the mobile subscriber for this transaction. Acceptable values are:
-// - `optedIn` - The end user has provided consent for the collection of their personal data. - `optedOut` - The end user has refused to allow collection of their personal data. - `notCollected` - No attempt has been made to obtain consent from the end user. - `unknown` - The status of consent collection is unknown.
-// Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time.
-type ConsentStatus string
-
-const (
-	ConsentStatusOptedIn      ConsentStatus = "optedIn"
-	ConsentStatusOptedOut     ConsentStatus = "optedOut"
-	ConsentStatusNotCollected ConsentStatus = "notCollected"
-	ConsentStatusUnknown      ConsentStatus = "unknown"
-)
-
-func (e ConsentStatus) ToPointer() *ConsentStatus {
-	return &e
-}
-
-func (e *ConsentStatus) UnmarshalJSON(data []byte) error {
-	var v string
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
-	}
-	switch v {
-	case "optedIn":
-		fallthrough
-	case "optedOut":
-		fallthrough
-	case "notCollected":
-		fallthrough
-	case "unknown":
-		*e = ConsentStatus(v)
-		return nil
-	default:
-		return fmt.Errorf("invalid value for ConsentStatus: %v", v)
-	}
-}
-
 type RedirectRequest struct {
 	// Prove-issued unique, private key that identifies the API Client.
 	APIClientID string `json:"apiClientId"`
@@ -53,7 +12,6 @@ type RedirectRequest struct {
 	// Denotes whether consent has been provided by the mobile subscriber for this transaction. Acceptable values are:
 	// - `optedIn` - The end user has provided consent for the collection of their personal data. - `optedOut` - The end user has refused to allow collection of their personal data. - `notCollected` - No attempt has been made to obtain consent from the end user. - `unknown` - The status of consent collection is unknown.
 	// Note: This value must be optedIn in order to access MNO data. Legacy customers' configurations are not affected by this requirement at this time.
-	//
 	ConsentStatus ConsentStatus `json:"consentStatus"`
 	// Uniquely identify the consent collected by the client. **Required** if `ConsentStatus` = `optedIn`
 	ConsentTransactionID *string `json:"consentTransactionId,omitempty"`
