@@ -1,4 +1,19 @@
-<!-- Start SDK Example Usage -->
+# Identity
+
+## Overview
+
+Operations or actions related to identity
+
+### Available Operations
+
+* [Verify](#verify) - Verify Consumer Information
+
+## Verify
+
+This endpoint submits the consumer's personal identifying information (PII) for verification; the response returns that verification decision and, if requested, detailed field-level information on each PII piece submitted.
+
+### Example Usage
+
 ```go
 package main
 
@@ -49,4 +64,16 @@ func main() {
     }
 }
 ```
-<!-- End SDK Example Usage -->
+
+### Parameters
+
+| Parameter                                                    | Type                                                         | Required                                                     | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `ctx`                                                        | [context.Context](https://pkg.go.dev/context#Context)        | :heavy_check_mark:                                           | The context to use for the request.                          |
+| `request`                                                    | [shared.VerifyRequest](../../models/shared/verifyrequest.md) | :heavy_check_mark:                                           | The request object to use for the request.                   |
+
+
+### Response
+
+**[*operations.VerifyResponse](../../models/operations/verifyresponse.md), error**
+

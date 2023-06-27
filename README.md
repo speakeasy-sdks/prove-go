@@ -28,27 +28,41 @@ import(
 )
 
 func main() {
-    s := prove.New()
+    s := prove.New(
+        prove.WithSecurity(shared.Security{
+            BearerAuth: "",
+        }),
+    )
 
     ctx := context.Background()
-    res, err := s.MobileAuth.AuthByRedirect(ctx, shared.RedirectRequest{
-        APIClientID: "C6f1j294x70dY3l76xU6",
-        ConsentCollectedTimestamp: prove.String("2022-05-11"),
-        ConsentDescription: prove.String("Test Description"),
-        ConsentStatus: shared.ConsentStatusOptedOut,
-        ConsentTransactionID: prove.String("EWSrelease-01092020-testTMO5"),
-        DeviceIP: "2607:fb90:be01:4122:e118:813f:736a:b7b9",
-        FinalTargetURL: "http://www.google.com",
-        MobileNetworkOperator: prove.String("T-Mobile"),
-        RequestID: "7f83-b0c4-90e0-90b3-11e10800200c9a66",
-        SubClientID: prove.String("D6hy5294x70dY3l76xU6"),
+    res, err := s.Identity.Verify(ctx, shared.VerifyRequest{
+        Address: prove.String("00 Mallard Park"),
+        City: prove.String("New Orleans"),
+        ConsentStatus: shared.ConsentStatusOptedOut.ToPointer(),
+        Details: prove.String("true"),
+        Dob: prove.String("1982-07-19"),
+        DriversLicenseNumber: prove.String("123456789"),
+        DriversLicenseState: prove.String("CO"),
+        EmailAddress: prove.String("mlongok@amazonaws.com"),
+        ExtendedAddress: prove.String("Apartment 3A"),
+        FirstName: "Marcia",
+        Last4: prove.String("6227"),
+        LastName: "Longo-Jones",
+        LastVerified: prove.String("2022-07-19"),
+        PayfoneAlias: prove.String("8EDE1ACC4VKRKKX8B91612DE9DCFB77DF0MEK1KQZ3T9PA44306E401F13F8B12A283E6E941AC03B46F6G3FD4CED48D730FC618931737A5FEE6E31E447"),
+        PhoneNumber: prove.String("6464778753"),
+        PhoneUpdate: prove.String("true"),
+        PostalCode: prove.String("70165"),
+        Region: prove.String("LA"),
+        RequestID: "14f3-b0c4-90e0-90b3-11e1-0800200c9a66",
+        Ssn: prove.String("470806227"),
         SubscriptionCustomerID: prove.String("ThisIsMyCustomerId222"),
     })
     if err != nil {
         log.Fatal(err)
     }
 
-    if res.RedirectResponse != nil {
+    if res.VerifyResponse != nil {
         // handle response
     }
 }
@@ -59,10 +73,27 @@ func main() {
 ## Available Resources and Operations
 
 
+### [Identity](docs/sdks/identity/README.md)
+
+* [Verify](docs/sdks/identity/README.md#verify) - Verify Consumer Information
+
+### [InstantLink](docs/sdks/instantlink/README.md)
+
+* [GetAuthURL](docs/sdks/instantlink/README.md#getauthurl) - Authorization Url
+* [GetResult](docs/sdks/instantlink/README.md#getresult) - Instant Link Result
+
 ### [MobileAuth](docs/sdks/mobileauth/README.md)
 
 * [AuthByRedirect](docs/sdks/mobileauth/README.md#authbyredirect) - Authenticate by Redirect
 * [AuthByRedirectFinish](docs/sdks/mobileauth/README.md#authbyredirectfinish) - Authenticate by Redirect Finish
+
+### [PreFill](docs/sdks/prefill/README.md)
+
+* [GetIdentity](docs/sdks/prefill/README.md#getidentity) - Get the Identity Information
+
+### [Trust](docs/sdks/trust/README.md)
+
+* [GetScore](docs/sdks/trust/README.md#getscore) - Trust Score
 <!-- End SDK Available Operations -->
 
 ### Maturity
