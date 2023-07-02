@@ -128,7 +128,7 @@ func New(opts ...SDKOption) *Prove {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "v1.0.0",
-			SDKVersion:        "1.3.0",
+			SDKVersion:        "1.3.1",
 			GenVersion:        "2.55.0",
 		},
 	}
