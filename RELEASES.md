@@ -159,3 +159,11 @@ Based on:
 - Speakeasy CLI 1.53.1 (2.58.2) https://github.com/speakeasy-api/speakeasy
 ### Releases
 - [Go v1.5.2] https://github.com/speakeasy-sdks/prove-go/releases/tag/v1.5.2 - .
+
+## 2023-07-10 01:41:59
+### Changes
+Based on:
+- OpenAPI Doc v1.0.0 
+- Speakeasy CLI 1.53.1 (2.58.2) https://github.com/speakeasy-api/speakeasy
+### Releases
+- [Go v1.5.3] https://github.com/speakeasy-sdks/prove-go/releases/tag/v1.5.3 - .
