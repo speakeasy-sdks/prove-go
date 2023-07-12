@@ -128,8 +128,8 @@ func New(opts ...SDKOption) *Prove {
 		sdkConfiguration: sdkConfiguration{
 			Language:          "go",
 			OpenAPIDocVersion: "v1.0.0",
-			SDKVersion:        "1.6.0",
-			GenVersion:        "2.61.0",
+			SDKVersion:        "1.6.1",
+			GenVersion:        "2.61.5",
 		},
 	}
 	for _, opt := range opts {
