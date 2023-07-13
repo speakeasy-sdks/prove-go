@@ -1,9 +1,9 @@
 configVersion: 1.0.0
 management:
-  docChecksum: 5391425751ed603fe410cd2d31a224ea
+  docChecksum: e069bed6969aa304142b9fcd4754e828
   docVersion: v1.0.0
-  speakeasyVersion: 1.56.4
-  generationVersion: 2.61.5
+  speakeasyVersion: 1.57.0
+  generationVersion: 2.62.1
 generation:
   comments:
     disableComments: false
@@ -13,6 +13,6 @@ generation:
   singleTagPerOp: false
   tagNamespacingDisabled: false
 go:
-  version: 1.6.1
+  version: 1.7.0
   maxMethodParams: "4"
   packageName: github.com/speakeasy-sdks/prove-go
